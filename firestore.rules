@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    function dlPath() {
+      return /databases/$(db)/documents/downloads/$(request.auth.uid + '_' + string(request.time.year() * 10000 + request.time.month() * 100 + request.time.day()));
+    }
+    // A download count can only go up by exactly 1, and only together with the user's daily download record.
+    function okCount(clipId) {
+      return request.auth != null && !exists(dlPath()) && existsAfter(dlPath()) && getAfter(dlPath()).data.clipId == clipId;
+    }
+    match /stats/{clipId} {
+      allow read: if true;
+      allow create: if okCount(clipId) && request.resource.data.keys().hasOnly(['count']) && request.resource.data.count == 1;
+      allow update: if okCount(clipId) && request.resource.data.keys().hasOnly(['count']) && request.resource.data.count == resource.data.count + 1;
+    }
+    // One document per user per UTC day. The id is checked against the server date,
+    // so a second download on the same day is rejected.
+    match /downloads/{id} {
+      allow list: if request.auth != null && resource.data.uid == request.auth.uid;
+      allow get: if request.auth != null && id.matches(request.auth.uid + '_[0-9]+');
+      allow create: if request.auth != null
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid', 'clipId', 'at'])
+        && id == request.auth.uid + '_' + string(request.time.year() * 10000 + request.time.month() * 100 + request.time.day());
+    }
+  }
+}

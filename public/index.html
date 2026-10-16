@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lumora</title>
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#000000">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000;--s1:#0d0d12;--s2:#17171f;--ink:#f6f6fb;--mute:#a0a0b4;--line:#2a2a36;--pink:#ff2e93;--vio:#8b5cff;--cyan:#22d3ee;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 Sora,system-ui,sans-serif;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+button,a{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+header .wrap{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;min-height:62px;padding-top:8px;padding-bottom:8px}
+.brand{display:flex;align-items:center;gap:4px;text-decoration:none}
+#lg{width:38px;height:38px;display:block}
+img,video,canvas{max-width:100%}
+h1,.th,.nx span{overflow-wrap:anywhere}
+.logo{font-weight:800;font-size:1.6rem;letter-spacing:-.02em;background:linear-gradient(90deg,var(--pink),var(--vio),var(--cyan),var(--pink));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:f 6s linear infinite}
+@keyframes f{to{background-position:300% 0}}
+@media (prefers-reduced-motion:reduce){.logo{animation:none}}
+#conn{margin-left:auto}
+.btn{border:0;border-radius:12px;padding:10px 20px;font-weight:800;cursor:pointer;color:#fff;background:linear-gradient(90deg,var(--pink),var(--vio));text-decoration:none;display:inline-block}
+.btn.g{background:var(--s2);border:1px solid var(--line)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+#conn{border-color:var(--cyan)}
+@media(max-width:560px){#auth,#conn{padding:8px 12px;font-size:.85rem}.logo{font-size:1.3rem}.hero{padding:24px 18px}.nx img{width:110px}}
+.inf{padding:8px 12px 10px;color:var(--mute);font-size:.85rem}
+.hero{margin:12px 0 22px;padding:34px 26px;border-radius:20px;border:1px solid var(--line);background:radial-gradient(60% 120% at 10% 0,rgba(255,46,147,.45),transparent 60%),radial-gradient(50% 100% at 95% 100%,rgba(34,211,238,.4),transparent 60%),radial-gradient(40% 90% at 60% 10%,rgba(139,92,255,.45),transparent 60%),var(--s1)}
+.hero h1{font-size:clamp(1.8rem,5vw,3rem);line-height:1.08;margin:0 0 8px;font-weight:800;letter-spacing:-.03em}
+.hero p{margin:0;max-width:48ch;opacity:.88}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(240px,100%),1fr));gap:16px;margin:10px 0 40px}
+.card{display:block;background:var(--s1);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;transition:box-shadow .2s,border-color .2s}
+.card:hover{border-color:var(--pink);box-shadow:0 8px 30px -8px var(--pink)}
+.th{aspect-ratio:16/9;position:relative;display:flex;align-items:flex-end;padding:12px;font-weight:800;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.dtag{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.7);font-size:.72rem;font-weight:600;padding:1px 9px;border-radius:999px}
+.note{color:var(--mute);font-size:.88rem}
+.wl{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:22px;margin:14px 0 40px}
+@media(max-width:860px){.wl{grid-template-columns:1fr}}
+.player{aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;position:relative;margin-top:12px}
+.player video,.player img.pp{width:100%;height:100%;object-fit:contain;background:#000;display:block}
+.wl h1{font-size:1.35rem;margin:14px 0 10px;line-height:1.3}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.adbox{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:20px;background:radial-gradient(70% 90% at 20% 10%,rgba(139,92,255,.5),transparent 60%),radial-gradient(60% 80% at 90% 100%,rgba(255,46,147,.4),transparent 60%),#0d0d12}
+.adbox video,.adbox img.am{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+.adtag{position:absolute;left:10px;top:10px;background:rgba(0,0,0,.7);color:#fff;font-size:.78rem;padding:2px 10px;border-radius:6px;z-index:2}
+.skip,.visit{position:absolute;bottom:12px;z-index:2;border:1px solid rgba(255,255,255,.5);background:rgba(0,0,0,.72);color:#fff;border-radius:8px;padding:7px 14px;font-weight:600;cursor:pointer;text-decoration:none;font-size:.9rem}
+.skip{right:12px}.visit{left:12px}
+.skip[disabled]{opacity:.7;cursor:default}
+.adn{font-size:1.5rem;font-weight:800;color:var(--cyan)}
+aside h3{margin:6px 0 12px;font-size:1rem}
+.nx{display:flex;gap:10px;margin-bottom:12px;text-decoration:none;font-size:.9rem;line-height:1.35}
+.nx img{width:140px;flex:none;aspect-ratio:16/9;object-fit:cover;border-radius:8px;background:#111}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="brand" id="brand" href="/"><canvas id="lg" width="76" height="76" aria-hidden="true"></canvas><span class="logo">Lumora</span></a><button class="btn g" id="conn" type="button">Connect</button><button class="btn" id="auth" type="button">Sign in</button></div></header>
+<main class="wrap" id="app"></main>
+
+<script type="module">
+/*FB-IMPORTS*/
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithPopup,GoogleAuthProvider,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getFirestore,collection,getDocs,query,where,doc,getDoc,writeBatch,increment,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+/*END-FB-IMPORTS*/
+/*BACKEND*/
+const app=initializeApp({apiKey:"AIzaSyA-A1lN0Bm3c9U-rLc1OUcSfpkETzrmqWM",authDomain:"lomura-fde61.firebaseapp.com",projectId:"lomura-fde61",storageBucket:"lomura-fde61.firebasestorage.app",messagingSenderId:"986563862116",appId:"1:986563862116:web:8f043268e1df5261710971"});
+const auth=getAuth(app),db=getFirestore(app);
+// UTC day number, must match the formula in firestore.rules
+const dayId=()=>{const d=new Date();return d.getUTCFullYear()*10000+(d.getUTCMonth()+1)*100+d.getUTCDate()};
+const B={
+ async data(){const g=f=>fetch(f,{cache:"no-store"}).then(r=>r.ok?r.json():[]).catch(()=>[]);return {clips:await g("clips.json"),ads:await g("ads.json")}},
+ onAuth(cb){onAuthStateChanged(auth,cb)},
+ async signIn(){return (await signInWithPopup(auth,new GoogleAuthProvider())).user},
+ signOut(){return signOut(auth)},
+ async downloaded(u){try{const s=await getDocs(query(collection(db,"downloads"),where("uid","==",u.uid)));return new Set(s.docs.map(d=>d.data().clipId))}catch(e){return new Set()}},
+ async usedToday(u){try{return (await getDoc(doc(db,"downloads",u.uid+"_"+dayId()))).exists()}catch(e){return false}},
+ async stats(){try{const s=await getDocs(collection(db,"stats"));const o={};s.forEach(d=>o[d.id]=d.data().count||0);return o}catch(e){return {}}},
+ async claim(u,id){const b=writeBatch(db);b.set(doc(db,"downloads",u.uid+"_"+dayId()),{uid:u.uid,clipId:id,at:serverTimestamp()});b.set(doc(db,"stats",id),{count:increment(1)},{merge:true});await b.commit()}
+};
+/*END-BACKEND*/
+
+const $=s=>document.querySelector(s);
+const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e};
+const src=c=>"clips/"+encodeURIComponent(c.file);
+const pst=c=>c.poster.startsWith("data:")?c.poster:"clips/"+c.poster;
+const ss=(k,v)=>{try{if(v===undefined)return sessionStorage.getItem(k);sessionStorage.setItem(k,v)}catch(e){return null}};
+let me=null,st={},D={clips:[],ads:[]},got=new Set(),used=false,timer,cur=null,moved=false,ready=false;
+
+// Order: clips you have not downloaded first, then the most downloaded, then the order of clips.json (clean scenic clips are listed first there).
+const dn=n=>"↓ "+n+(n===1?" download":" downloads");
+const ordered=()=>{const ix=new Map(D.clips.map((c,i)=>[c.id,i]));return [...D.clips].sort((a,b)=>(got.has(a.id)-got.has(b.id))||((st[b.id]||0)-(st[a.id]||0))||ix.get(a.id)-ix.get(b.id))};
+
+$("#brand").onclick=e=>{e.preventDefault();if(location.hash&&location.hash!=="#/")location.href="/";else location.reload()};
+$("#conn").onclick=()=>window.open("https://akrstudio.netlify.app/","_blank","noopener");
+$("#auth").onclick=()=>me?B.signOut():B.signIn().catch(()=>{});
+addEventListener("hashchange",()=>{moved=true;route()});
+
+function route(){
+ clearInterval(timer);scrollTo(0,0);
+ const m=location.hash.match(/^#\/watch\/(.+)$/),c=m&&D.clips.find(x=>x.id===decodeURIComponent(m[1]));
+ c?watch(c):home();
+}
+function card(c){
+ const a=el("a","card");a.href="#/watch/"+encodeURIComponent(c.id);
+ const t=el("div","th",c.title);t.style.background=`linear-gradient(to top,rgba(0,0,0,.8),transparent 65%),url(${pst(c)}) center/cover`;
+ if(got.has(c.id))t.append(el("span","dtag","Downloaded"));
+ a.append(t,el("div","inf",dn(st[c.id]||0)));return a;
+}
+function home(){
+ $("#app").innerHTML='<section class="hero"><h1>Original clips.<br>Watch free.</h1><p>Every clip is made by us. Download one clip free, every day.</p></section><div class="grid" id="grid"></div>';
+ if(!D.clips.length)$("#grid").append(el("p","note","No clips yet."));
+ ordered().forEach(c=>$("#grid").append(card(c)));
+}
+function refreshDl(){
+ const b=$("#dl");if(!b)return;
+ b.disabled=!!(me&&used);
+ b.textContent=!me?"Sign in to download free":used?"Today's free download used":"Download free today";
+}
+function watch(c){
+ cur=c;
+ const n=+(ss("lm_seen")||0);ss("lm_seen",String(n+1));
+ $("#app").innerHTML='<div class="wl"><div><a class="btn g" href="#/" id="bk">← Back</a><div class="player" id="pl"></div><h1 id="wt"></h1><p class="note" id="cnt"></p><div class="row"><button class="btn" id="dl" type="button"></button></div><p class="note" id="dm"></p></div><aside><h3>Up next</h3><div id="up"></div></aside></div>';
+ $("#wt").textContent=c.title;$("#cnt").textContent=dn(st[c.id]||0);
+ $("#bk").onclick=e=>{e.preventDefault();moved?history.back():(location.hash="#/")};
+ ordered().filter(x=>x.id!==c.id).forEach(x=>{const a=el("a","nx");a.href="#/watch/"+encodeURIComponent(x.id);const im=el("img");im.src=pst(x);im.alt="";a.append(im,el("span",0,x.title));$("#up").append(a)});
+ $("#dl").onclick=download;refreshDl();
+ if(me)B.usedToday(me).then(u=>{used=u;refreshDl()});
+ // first video of a visit opens with no ad; every later one starts with an ad
+ n===0||!D.ads.length?play(c):ad(c);
+}
+function play(c){
+ const pl=$("#pl");if(!pl)return;pl.innerHTML="";
+ if(c.file){const v=el("video");v.controls=true;v.autoplay=true;v.playsInline=true;v.poster=pst(c);v.src=src(c);pl.append(v)}
+ else{const i=el("img","pp");i.src=pst(c);i.alt="";pl.append(i)}
+}
+function ad(c){
+ const a=D.ads[Math.floor(Math.random()*D.ads.length)],pl=$("#pl");pl.innerHTML="";
+ const box=el("div","adbox");let done=false,t=0;
+ const end=()=>{if(done)return;done=true;clearInterval(timer);play(c)};
+ if(a.video){const v=el("video");v.src="ads/"+encodeURIComponent(a.video);v.autoplay=true;v.playsInline=true;v.onended=end;v.onerror=end;box.append(v)}
+ else{if(a.image){const i=el("img","am");i.src="ads/"+encodeURIComponent(a.image);i.alt="";box.append(i)}
+  else{box.append(el("div","adn",a.name),el("div","note",a.text||""))}}
+ const len=a.seconds||15;
+ box.append(el("span","adtag","Ad"));
+ const sk=el("button","skip","Skip in 5");sk.type="button";sk.disabled=true;sk.onclick=end;box.append(sk);
+ if(a.link&&/^https?:\/\//.test(a.link)){const l=el("a","visit","Visit "+(a.name||"site"));l.href=a.link;l.target="_blank";l.rel="noopener sponsored";box.append(l)}
+ pl.append(box);
+ timer=setInterval(()=>{t++;if(t>=5){sk.disabled=false;sk.textContent="Skip ad ▸"}else sk.textContent="Skip in "+(5-t);if(!a.video&&t>=len)end()},1000);
+}
+async function download(){
+ const c=cur;
+ if(!me){try{me=await B.signIn()}catch(e){return}}
+ const m=$("#dm");
+ try{
+  await B.claim(me,c.id);used=true;got.add(c.id);st[c.id]=(st[c.id]||0)+1;$("#cnt").textContent=dn(st[c.id]);refreshDl();
+  if(c.file){const a=el("a");a.href=src(c);a.download=c.title+".mp4";document.body.append(a);a.click();a.remove();}
+  m.textContent="Downloading. This clip will now move to the bottom of the list.";
+ }catch(e){used=true;refreshDl();m.textContent=e.code==="permission-denied"?"You have used today's free download. Come back tomorrow (resets at 00:00 UTC).":"Download failed: "+(e.code||e.message)}
+}
+
+// animated logo: the colors keep flowing around the ball
+(()=>{const cv=$("#lg"),cx=cv.getContext("2d"),S=76,im=cx.createImageData(S,S),K=["2ef2b0","22d3ee","3b82ff","8b5cff","ff2e93","ff7a2e","ffd23f"].map(h=>[0,2,4].map(i=>parseInt(h.slice(i,i+2),16)));
+ const L=new Uint8Array(768);for(let i=0;i<256;i++){const t=i/256*7,k=Math.floor(t),f=t-k,p0=K[(k+6)%7],p1=K[k%7],p2=K[(k+1)%7],p3=K[(k+2)%7];for(let j=0;j<3;j++){const v=.5*(2*p1[j]+(p2[j]-p0[j])*f+(2*p0[j]-5*p1[j]+4*p2[j]-p3[j])*f*f+(3*p1[j]-p0[j]-3*p2[j]+p3[j])*f*f*f);L[i*3+j]=Math.max(0,Math.min(255,v))}}
+ const T=new Float32Array(S*S),A=new Uint8Array(S*S),s=S/152;
+ for(let y=0;y<S;y++)for(let x=0;x<S;x++){const X=(x+.5)/s-76,Y=(y+.5)/s-76,n=y*S+x;A[n]=Math.max(0,Math.min(1,(76-Math.hypot(X,Y))*s+.5))*255;T[n]=(Math.atan2(Y-88,X-88)*180/Math.PI+180)/90*.9}
+ const draw=ph=>{const o=im.data;for(let n=0;n<S*S;n++){const i=(((T[n]+ph)%1+1)%1*256|0)*3;o[n*4]=L[i];o[n*4+1]=L[i+1];o[n*4+2]=L[i+2];o[n*4+3]=A[n]}cx.putImageData(im,0,0)};
+ draw(.1);if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
+ let last=0;const loop=ts=>{if(ts-last>33){last=ts;draw(ts/9000)}requestAnimationFrame(loop)};requestAnimationFrame(loop)})();
+
+D=await B.data();st=await B.stats();
+B.onAuth(async u=>{
+ me=u;$("#auth").textContent=u?"Sign out":"Sign in";
+ got=u?await B.downloaded(u):new Set();used=u?await B.usedToday(u):false;
+ if(!ready){ready=true;route()}
+ else if(!location.hash.startsWith("#/watch/"))home();else refreshDl();
+});
+</script>
+</body>
+</html>
