@@ -21,10 +21,10 @@
 4. Firebase Console > Authentication > Sign-in method: Google must be enabled.
 5. Rules: paste firestore.rules in Firestore > Rules, and storage.rules in Storage > Rules, then Publish.
 
-## Adding videos
-Easiest: open `your-site/admin.html`, sign in with akr.rabbi0@gmail.com, choose videos named after the clip id (c24.mp4, c21.mp4 ...) and press Upload.
-Ids are listed on that page. Clips without a video show the poster with "Video coming soon".
-To use a different file name, set `"file":"my-name.mp4"` in public/clips.json.
+## Adding clips
+Sign in on the site with akr.rabbi0@gmail.com. Your email shows on the button at the top right; open it and choose "Upload & manage" (or go to your-site/admin.html).
+Videos tab: drop a video, type a title, press Upload clip. A poster is taken from the video automatically (or choose your own). The clip appears on the site right away, no code editing.
+The same tab lists every clip, shows which ones have no video yet, and lets you attach a video to the 27 older clips ("Upload video").
 Optional, so Download saves directly: `gsutil cors set cors.json gs://lomura-fde61.firebasestorage.app`
 
 ## Ads

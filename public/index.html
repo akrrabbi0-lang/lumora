@@ -24,9 +24,12 @@ h1,.th,.nx span{overflow-wrap:anywhere}
 @keyframes f{to{background-position:300% 0}}
 @media (prefers-reduced-motion:reduce){.logo{animation:none}}
 #conn{margin-left:auto}
-#who{color:var(--mute);font-size:.85rem;max-width:42vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#who:not(:empty){margin-left:auto}#who:not(:empty)~#conn{margin-left:0}
-#adm[hidden]{display:none}
+.acct{position:relative}
+#auth{max-width:52vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.menu{position:absolute;right:0;top:calc(100% + 6px);min-width:190px;background:var(--s2);border:1px solid var(--line);border-radius:12px;padding:6px;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+.menu[hidden],.menu a[hidden]{display:none}
+.menu a,.menu button{display:block;width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:10px 12px;cursor:pointer;color:var(--ink);text-decoration:none;font:inherit}
+.menu a:hover,.menu button:hover{background:var(--line)}
 .btn{border:0;border-radius:12px;padding:10px 20px;font-weight:800;cursor:pointer;color:#fff;background:linear-gradient(90deg,var(--pink),var(--vio));text-decoration:none;display:inline-block}
 .btn.g{background:var(--s2);border:1px solid var(--line)}
 .btn[disabled]{opacity:.5;cursor:not-allowed}
@@ -61,7 +64,7 @@ aside h3{margin:6px 0 12px;font-size:1rem}
 </style>
 </head>
 <body>
-<header><div class="wrap"><a class="brand" id="brand" href="/"><canvas id="lg" width="76" height="76" aria-hidden="true"></canvas><span class="logo">Lumora</span></a><span id="who"></span><a class="btn" id="adm" href="/admin.html" hidden>Upload</a><button class="btn g" id="conn" type="button">Connect</button><button class="btn" id="auth" type="button">Sign in</button></div></header>
+<header><div class="wrap"><a class="brand" id="brand" href="/"><canvas id="lg" width="76" height="76" aria-hidden="true"></canvas><span class="logo">Lumora</span></a><button class="btn g" id="conn" type="button">Connect</button><div class="acct"><button class="btn" id="auth" type="button">Sign in</button><div class="menu" id="menu" hidden><a id="adm" href="/admin.html" hidden>Upload &amp; manage</a><button id="out" type="button">Sign out</button></div></div></div></header>
 <main class="wrap" id="app"></main>
 
 <script type="module">
@@ -78,7 +81,11 @@ const dayId=()=>{const d=new Date();return d.getUTCFullYear()*10000+(d.getUTCMon
 const B={
  async data(){
   const g=f=>fetch(f,{cache:"no-store"}).then(r=>r.ok?r.json():[]).catch(()=>[]);
-  const [clips,sa,fa]=await Promise.all([g("clips.json"),g("ads.json"),getDocs(collection(db,"ads")).then(x=>x.docs.map(d=>({id:d.id,...d.data()}))).catch(()=>[])]);
+  const [jc,sa,fa,fc]=await Promise.all([g("clips.json"),g("ads.json"),getDocs(collection(db,"ads")).then(x=>x.docs.map(d=>({id:d.id,...d.data()}))).catch(()=>[]),getDocs(collection(db,"clips")).then(x=>x.docs.map(d=>({id:d.id,...d.data()}))).catch(()=>[])]);
+  // Clips uploaded from admin.html come first (newest first), then the ones in clips.json
+  const ov=Object.fromEntries(fc.map(c=>[c.id,c]));
+  const clips=[...fc.filter(c=>c.title&&c.file&&!c.hidden).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)).map(c=>({id:c.id,title:c.title,file:c.file,poster:c.poster||""})),
+   ...jc.filter(c=>!(ov[c.id]&&ov[c.id].hidden)).map(c=>ov[c.id]&&ov[c.id].title?{...c,title:ov[c.id].title}:c)];
   // Ads uploaded from admin.html (Firestore + Storage): only running ads that have not reached their view limit
   const AB="https://firebasestorage.googleapis.com/v0/b/lomura-fde61.firebasestorage.app/o/";
   const fire=fa.filter(a=>a.active!==false&&(a.views||0)<(a.maxViews||0)).map(a=>({id:a.id,name:a.name,link:a.link,seconds:15,left:a.maxViews-(a.views||0),[a.kind==="image"?"image":"video"]:AB+encodeURIComponent("ads/"+a.file)+"?alt=media"}));
@@ -102,7 +109,8 @@ const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!==u
 const SB="https://firebasestorage.googleapis.com/v0/b/lomura-fde61.firebasestorage.app/o/";
 // If "file" is empty, the video is expected to be named <id>.mp4 in Storage (e.g. c24.mp4)
 const src=c=>SB+encodeURIComponent("clips/"+(c.file||c.id+".mp4"))+"?alt=media";
-const pst=c=>/^(data:|https?:|posters\/)/.test(c.poster)?c.poster:SB+encodeURIComponent("clips/"+c.poster)+"?alt=media";
+const NOP="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%279%27%3E%3Crect width=%2716%27 height=%279%27 fill=%27%2317171f%27/%3E%3C/svg%3E";
+const pst=c=>!c.poster?NOP:/^(data:|https?:|posters\/)/.test(c.poster)?c.poster:SB+encodeURIComponent("clips/"+c.poster)+"?alt=media";
 const ss=(k,v)=>{try{if(v===undefined)return sessionStorage.getItem(k);sessionStorage.setItem(k,v)}catch(e){return null}};
 let me=null,st={},D={clips:[],ads:[]},got=new Set(),used=false,timer,cur=null,moved=false,ready=false;
 
@@ -112,7 +120,10 @@ const ordered=()=>{const ix=new Map(D.clips.map((c,i)=>[c.id,i]));return [...D.c
 
 $("#brand").onclick=e=>{e.preventDefault();if(location.hash&&location.hash!=="#/")location.href="/";else location.reload()};
 $("#conn").onclick=()=>window.open("https://akrstudio.netlify.app/","_blank","noopener");
-$("#auth").onclick=()=>me?B.signOut():B.signIn().catch(()=>{});
+const OWNER="akr.rabbi0@gmail.com";
+$("#auth").onclick=e=>{e.stopPropagation();if(!me){B.signIn().catch(()=>{});return}$("#menu").hidden=!$("#menu").hidden};
+$("#out").onclick=()=>{$("#menu").hidden=true;B.signOut()};
+document.addEventListener("click",()=>{$("#menu").hidden=true});
 addEventListener("hashchange",()=>{moved=true;route()});
 
 function route(){
@@ -191,8 +202,8 @@ async function download(){
 
 D=await B.data();st=await B.stats();
 B.onAuth(async u=>{
- me=u;$("#auth").textContent=u?"Sign out":"Sign in";
- $("#who").textContent=u?u.email:"";$("#adm").hidden=!(u&&u.email==="akr.rabbi0@gmail.com");
+ me=u;$("#auth").textContent=u?u.email+" \u25BE":"Sign in";
+ $("#adm").hidden=!(u&&u.email===OWNER);$("#menu").hidden=true;
  got=u?await B.downloaded(u):new Set();used=u?await B.usedToday(u):false;
  if(!ready){ready=true;route()}
  else if(!location.hash.startsWith("#/watch/"))home();else refreshDl();

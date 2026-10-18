@@ -19,6 +19,12 @@ service cloud.firestore {
         && id == request.auth.uid + '_' + string(request.time.year() * 10000 + request.time.month() * 100 + request.time.day());
     }
 
+    // Clips uploaded from admin.html. Everyone can read, only the owner can write.
+    match /clips/{clipId} {
+      allow read: if true;
+      allow create, update, delete: if isOwner();
+    }
+
     // Ads uploaded from admin.html. Everyone can read. Only the owner can create, edit or delete.
     // Visitors can only add exactly +1 to "views", and never above "maxViews".
     match /ads/{adId} {
