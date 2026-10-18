@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lumora</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Noto+Sans+Bengali:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000;--s1:#0d0d12;--s2:#17171f;--ink:#f6f6fb;--mute:#a0a0b4;--line:#2a2a36;--pink:#ff2e93;--vio:#8b5cff;--cyan:#22d3ee;--free:#22d3ee;--ad:#ffb020;--paid:#ff2e93;color-scheme:dark;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-theme="light"]{--bg:#f7f7fc;--s1:#fff;--s2:#ececf5;--ink:#0b0b14;--mute:#5b5b70;--line:#d8d8e4;--free:#0a7f9a;--ad:#b45309;--paid:#c01a6e;color-scheme:light}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 Sora,"Noto Sans Bengali",system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:16px;height:60px}
+.logo{font-weight:800;font-size:1.6rem;letter-spacing:-.02em;background:linear-gradient(90deg,var(--pink),var(--vio),var(--cyan),var(--pink));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 6s linear infinite}
+@keyframes flow{to{background-position:300% 0}}
+.tabs{display:flex;gap:4px;margin-left:auto}
+.tabs button{background:none;border:0;padding:8px 14px;border-radius:999px;cursor:pointer;color:var(--mute);font-weight:600}
+.tabs button[aria-current=page]{background:linear-gradient(90deg,var(--pink),var(--vio));color:#fff}
+.hero{margin:20px 0;padding:44px 28px;border-radius:20px;border:1px solid var(--line);background:radial-gradient(60% 120% at 10% 0,rgba(255,46,147,.45),transparent 60%),radial-gradient(50% 100% at 95% 100%,rgba(34,211,238,.4),transparent 60%),radial-gradient(40% 90% at 60% 10%,rgba(139,92,255,.45),transparent 60%),var(--s1);background-size:140% 140%;animation:drift 12s ease-in-out infinite alternate}
+@keyframes drift{to{background-position:100% 100%}}
+:root[data-calm] *,:root[data-calm] .hero,:root[data-calm] .logo{animation:none!important}
+.hero h1{font-size:clamp(2rem,6vw,3.6rem);line-height:1.05;margin:0 0 10px;font-weight:800;letter-spacing:-.03em}
+.hero p{margin:0;max-width:46ch;color:var(--ink);opacity:.85}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px}
+.chip{flex:none;border:1px solid var(--line);background:var(--s1);padding:6px 16px;border-radius:999px;cursor:pointer;font-weight:600}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px;margin:14px 0 48px}
+.card{background:var(--s1);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;text-align:left;padding:0;transition:box-shadow .2s,border-color .2s}
+.card:hover{border-color:var(--c);box-shadow:0 0 0 1px var(--c),0 8px 30px -8px var(--c)}
+.th{aspect-ratio:16/9;position:relative;display:flex;align-items:flex-end;padding:10px 12px;font-weight:800;font-size:1.1rem;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.dur{position:absolute;right:8px;top:8px;background:rgba(0,0,0,.7);color:#fff;font-size:.78rem;padding:1px 8px;border-radius:6px}
+.inf{padding:10px 12px 14px}
+.inf h3{margin:0;font-size:1rem;line-height:1.35}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;color:var(--mute);font-size:.84rem}
+.tag{font-weight:800;font-size:.78rem;padding:2px 10px;border-radius:999px;color:#000;background:var(--c)}
+.f{--c:var(--free)}.a{--c:var(--ad)}.p{--c:var(--paid)}
+h2.t{font-size:1.7rem;margin:26px 0 6px;letter-spacing:-.02em}
+.form{background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:20px;max-width:620px;margin:0 0 48px}
+.fld{display:block;margin:0 0 16px;font-weight:600}
+.fld>span{display:block;margin-bottom:6px}
+input[type=text],input[type=number],select{width:100%;background:var(--s2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;background:var(--s2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:400}
+.opt input{margin-top:5px;accent-color:var(--pink)}
+.opt b{display:block}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--line);font-weight:600}
+.sw small{display:block;color:var(--mute);font-weight:400}
+.btn{border:0;border-radius:12px;padding:12px 22px;font-weight:800;cursor:pointer;color:#fff;background:linear-gradient(90deg,var(--pink),var(--vio))}
+.btn.g{background:var(--s2);color:var(--ink);border:1px solid var(--line)}
+.note{color:var(--mute);font-size:.86rem}
+.split{margin:14px 0;padding:12px 14px;border-radius:10px;border:1px dashed var(--vio);font-size:.9rem}
+.err{color:var(--pink);font-size:.88rem;min-height:1.3em}
+#setup{position:fixed;inset:0;z-index:50;background:var(--bg);overflow:auto;display:none;padding:calc(24px + env(safe-area-inset-top,0px)) 16px 24px}
+#setup .form{margin:16px auto}
+dialog{border:1px solid var(--line);border-radius:16px;padding:0;width:min(640px,94vw);background:var(--s1);color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.75)}
+.scr{aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#fff;text-align:center;padding:16px}
+.pg{width:80%;height:6px;background:rgba(255,255,255,.3);border-radius:3px;overflow:hidden}
+.pg i{display:block;height:100%;width:0;background:#fff}
+.big{font-size:2.6rem;font-weight:800;line-height:1}
+.pan{padding:14px 18px 18px}
+.pan h2{margin:0;font-size:1.2rem}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+</style>
+</head>
+<body>
+<div id="setup"></div>
+<header class="top"><div class="wrap"><span class="logo">Lumora</span><nav class="tabs" id="tabs" aria-label="Main"></nav></div></header>
+<main class="wrap" id="app"></main>
+<dialog id="dlg" aria-label="Player"><div class="scr" id="scr"></div><div class="pan"><h2 id="dt"></h2><div class="note" id="dm"></div><div class="row" id="act"></div></div></dialog>
+
+<script>
+const CC="AF AL DZ AD AO AG AR AM AU AT AZ BS BH BD BB BY BE BZ BJ BT BO BA BW BR BN BG BF BI CV KH CM CA CF TD CL CN CO KM CG CD CR CI HR CU CY CZ DK DJ DM DO EC EG SV GQ ER EE SZ ET FJ FI FR GA GM GE DE GH GR GD GT GN GW GY HT HN HU IS IN ID IR IQ IE IL IT JM JP JO KZ KE KI KW KG LA LV LB LS LR LY LI LT LU MG MW MY MV ML MT MH MR MU MX FM MD MC MN ME MA MZ MM NA NR NP NL NZ NI NE NG KP MK NO OM PK PW PS PA PG PY PE PH PL PT QA RO RU RW KN LC VC WS SM ST SA SN RS SC SL SG SK SI SB SO ZA KR SS ES LK SD SR SE CH SY TW TJ TZ TH TL TG TO TT TN TR TM TV UG UA AE GB US UY UZ VU VA VE VN YE ZM ZW".split(" ");
+const LG="en bn hi ur ar es fr de pt ru zh ja ko tr id ms th vi it nl pl uk fa ne si ta te mr gu pa sw am he el sv no da fi cs ro hu bg sr hr my km fil".split(" ");
+const C2L={BD:"bn",IN:"hi",PK:"ur",SA:"ar",EG:"ar",AE:"ar",ES:"es",MX:"es",AR:"es",FR:"fr",DE:"de",BR:"pt",PT:"pt",RU:"ru",CN:"zh",JP:"ja",KR:"ko",TR:"tr",ID:"id",NP:"ne",LK:"si",IT:"it",IR:"fa"};
+const flag=c=>String.fromCodePoint(...[...c].map(x=>127397+x.charCodeAt()));
+const RN=new Intl.DisplayNames(["en"],{type:"region"});
+const lname=c=>{try{const n=new Intl.DisplayNames([c],{type:"language"}).of(c),e=new Intl.DisplayNames(["en"],{type:"language"}).of(c);return n==e?e:n+" – "+e}catch(e){return c}};
+const T={en:{home:"Home",up:"Upload",set:"Settings",h1:"Watch free. Unlock more.",hp:"Every video here is original, made by people like you.",all:"All",free:"Free",ad:"Watch ad",paid:"Paid",clip:"Clips",long:"Long",own:"Owned",adp:"Ad playing…",now:"Now playing",unl:"Unlock for",close:"Close",pay:"Pay with",
+upt:"Upload a video",file:"Video file",ttl:"Title",acc:"How can viewers watch it?",fr:"Free",frd:"Anyone can watch. Brings viewers to Lumora.",ar:"Watch an ad first",ard:"Viewers watch a short ad, then the video unlocks.",pr:"Paid",prd:"Viewers pay once to unlock.",price:"Price (USD)",rights:"This is my own original work. It has no copyrighted music, footage or images.",split:"You keep 85% of all ad and sales revenue. Lumora keeps 15% to run the platform.",pub:"Publish",ok:"Published! Your video is now in the library.",e1:"Choose a video file.",e2:"Enter a title.",e3:"Set a price above 0.",e4:"Confirm that you own the rights.",
+setup:"Welcome to Lumora",st:"Set up your app",cty:"Country",lng:"Language",thm:"Theme",dk:"Dark",lt:"Light",sy:"System",sav:"Data saver",savd:"Play at 360p to use less data",calm:"Reduce motion",calmd:"Turn off moving backgrounds",go:"Continue",lnote:"Menus are translated for English and Bangla. More languages are coming.",saved:"Saved automatically."},
+bn:{home:"হোম",up:"আপলোড",set:"সেটিংস",h1:"ফ্রি দেখুন। আরও আনলক করুন।",hp:"এখানের প্রতিটি ভিডিও মৌলিক, আপনার মতো মানুষের তৈরি।",all:"সব",free:"ফ্রি",ad:"বিজ্ঞাপন দেখে",paid:"পেইড",clip:"ক্লিপ",long:"লম্বা",own:"কেনা",adp:"বিজ্ঞাপন চলছে…",now:"এখন চলছে",unl:"আনলক করুন",close:"বন্ধ করুন",pay:"পেমেন্ট করুন",
+upt:"ভিডিও আপলোড করুন",file:"ভিডিও ফাইল",ttl:"শিরোনাম",acc:"দর্শক কীভাবে দেখবে?",fr:"ফ্রি",frd:"সবাই দেখতে পারবে। Lumora-তে দর্শক আনে।",ar:"আগে বিজ্ঞাপন দেখে",ard:"ছোট বিজ্ঞাপন দেখার পর ভিডিও খুলবে।",pr:"পেইড",prd:"একবার টাকা দিলেই আনলক।",price:"দাম (USD)",rights:"এটি আমার নিজের মৌলিক কাজ। এতে কপিরাইট করা গান, ফুটেজ বা ছবি নেই।",split:"বিজ্ঞাপন ও বিক্রির আয়ের ৮৫% আপনার। প্ল্যাটফর্ম চালাতে Lumora নেয় ১৫%।",pub:"প্রকাশ করুন",ok:"প্রকাশিত! আপনার ভিডিও এখন লাইব্রেরিতে।",e1:"একটি ভিডিও ফাইল বেছে নিন।",e2:"শিরোনাম লিখুন।",e3:"০-এর বেশি দাম দিন।",e4:"নিশ্চিত করুন ভিডিওর অধিকার আপনার।",
+setup:"Lumora-তে স্বাগতম",st:"আপনার অ্যাপ সাজিয়ে নিন",cty:"দেশ",lng:"ভাষা",thm:"থিম",dk:"ডার্ক",lt:"লাইট",sy:"সিস্টেম",sav:"ডেটা সেভার",savd:"কম ডেটায় ৩৬০p-তে চলবে",calm:"কম অ্যানিমেশন",calmd:"চলমান ব্যাকগ্রাউন্ড বন্ধ",go:"চালিয়ে যান",lnote:"মেনু এখন ইংরেজি ও বাংলায় আছে। আরও ভাষা আসছে।",saved:"নিজে থেকেই সেভ হয়।"}};
+const t=k=>(T[S.lang]||T.en)[k]||T.en[k];
+const bn=n=>S.lang=="bn"?String(n).replace(/\d/g,d=>"০১২৩৪৫৬৭৮৯"[d]):String(n);
+
+let reg=(navigator.language.split("-")[1]||"US").toUpperCase();if(!CC.includes(reg))reg="US";
+let S={country:reg,lang:C2L[reg]||"en",theme:"dark",saver:false,calm:false,done:false,view:"home",f:"all"};
+const store=(k,v)=>{try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}};
+Object.assign(S,store("lm_s")||{});
+let unlocked=new Set(store("lm_u")||[]);
+const G=[["#ff2e93","#5b1346"],["#8b5cff","#2a1766"],["#22d3ee","#0b4a63"],["#ff8a1f","#7a2e06"],["#34d399","#064e3b"],["#f43f5e","#6b1228"]];
+let V=[
+{id:1,t:"Monsoon Rooftop Cooking",u:"Nila R.",cc:"BD",k:"long",a:"free",d:"38:20"},
+{id:2,t:"Learn Guitar in 30 Days",u:"Mateo S.",cc:"MX",k:"long",a:"paid",p:12,d:"1:42:00"},
+{id:3,t:"Skate Park at Sunrise",u:"Kenji T.",cc:"JP",k:"clip",a:"free",d:"0:48"},
+{id:4,t:"Street Photography Masterclass",u:"Amara O.",cc:"NG",k:"long",a:"paid",p:19,d:"2:05:30"},
+{id:5,t:"One-Minute Desk Stretch",u:"Priya M.",cc:"IN",k:"clip",a:"ad",d:"1:02"},
+{id:6,t:"Old Town Walking Tour",u:"Lucas B.",cc:"BR",k:"long",a:"ad",d:"54:10"},
+{id:7,t:"Behind My Studio Door",u:"Sofia L.",cc:"IT",k:"clip",a:"paid",p:3,d:"4:15"},
+{id:8,t:"Fishing at the Delta",u:"Rahim K.",cc:"BD",k:"clip",a:"ad",d:"2:30"},
+{id:9,t:"Build a Desk From Scratch",u:"Emma W.",cc:"GB",k:"long",a:"free",d:"47:05"}
+].map((v,i)=>({...v,g:G[i%6]}));
+V=V.concat(store("lm_up")||[]);
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const persist=()=>store("lm_s",S);
+function apply(){const th=S.theme=="system"?(matchMedia("(prefers-color-scheme:light)").matches?"light":"dark"):S.theme;
+ document.documentElement.dataset.theme=th;document.documentElement.lang=S.lang;
+ if(S.calm)document.documentElement.setAttribute("data-calm","");else document.documentElement.removeAttribute("data-calm")}
+
+function settingsForm(el,first){
+ const co=CC.map(c=>[c,RN.of(c)]).sort((a,b)=>a[1].localeCompare(b[1]));
+ el.innerHTML=`<div class="form"><div class="logo" style="font-size:2rem">Lumora</div><h2 class="t" style="margin-top:6px">${first?t("setup"):t("set")}</h2><p class="note">${first?t("st"):t("saved")}</p>
+ <label class="fld"><span>${t("cty")}</span><select id="sc">${co.map(x=>`<option value="${x[0]}"${x[0]==S.country?" selected":""}>${flag(x[0])}  ${x[1]}</option>`).join("")}</select></label>
+ <label class="fld"><span>${t("lng")}</span><select id="sl">${LG.map(c=>`<option value="${c}"${c==S.lang?" selected":""}>${esc(lname(c))}</option>`).join("")}</select><span class="note" style="margin-top:6px">${t("lnote")}</span></label>
+ <label class="fld"><span>${t("thm")}</span><select id="st"><option value="dark">${t("dk")}</option><option value="light">${t("lt")}</option><option value="system">${t("sy")}</option></select></label>
+ <label class="sw"><span>${t("sav")}<small>${t("savd")}</small></span><input type="checkbox" id="ss"></label>
+ <label class="sw"><span>${t("calm")}<small>${t("calmd")}</small></span><input type="checkbox" id="sm"></label>
+ ${first?`<div class="row"><button class="btn" id="go">${t("go")}</button></div>`:""}</div>`;
+ $("#st").value=S.theme;$("#ss").checked=S.saver;$("#sm").checked=S.calm;
+ const ch=()=>{S.country=$("#sc").value;S.theme=$("#st").value;S.saver=$("#ss").checked;S.calm=$("#sm").checked;persist();apply()};
+ $("#sc").onchange=()=>{ch();if(C2L[S.country]){S.lang=C2L[S.country];persist()}rebuild(first)};
+ $("#sl").onchange=()=>{S.lang=$("#sl").value;persist();apply();rebuild(first)};
+ ["#st","#ss","#sm"].forEach(s=>$(s).onchange=ch);
+ if(first)$("#go").onclick=()=>{S.done=true;persist();$("#setup").style.display="none";nav()};
+}
+function rebuild(first){settingsForm(first?$("#setup"):$("#app"),first);nav(true)}
+
+function nav(keep){
+ $("#tabs").innerHTML=[["home","home"],["up","up"],["set","set"]].map(x=>`<button data-v="${x[0]}"${S.view==x[0]?' aria-current="page"':""}>${t(x[1])}</button>`).join("");
+ if(keep===true&&S.view=="set"||keep===true&&!S.done)return;
+ ({home,up,set:()=>settingsForm($("#app"),false)})[S.view]();
+}
+$("#tabs").onclick=e=>{const b=e.target.closest("button");if(b){S.view=b.dataset.v;nav()}};
+
+const tag=v=>v.a=="free"?t("free"):v.a=="ad"?t("ad"):unlocked.has(v.id)?t("own"):"$"+bn(v.p);
+function home(){
+ const F=["all","free","ad","paid","clip","long"];
+ const list=V.filter(v=>S.f=="all"||v.a==S.f||v.k==S.f).sort((a,b)=>(b.cc==S.country)-(a.cc==S.country));
+ $("#app").innerHTML=`<section class="hero"><h1>${t("h1")}</h1><p>${t("hp")}</p></section>
+ <div class="chips">${F.map(f=>`<button class="chip" data-f="${f}" aria-pressed="${S.f==f}">${t(f)}</button>`).join("")}</div>
+ <div class="grid">${list.map(v=>`<button class="card ${v.a[0]}" data-id="${v.id}"><div class="th" style="background:linear-gradient(135deg,${v.g[0]},${v.g[1]})"><span class="dur">${bn(v.d)}</span>${esc(v.t)}</div>
+ <div class="inf"><div class="meta"><span>${flag(v.cc)} ${esc(v.u)}</span><span class="tag">${tag(v)}</span></div></div></button>`).join("")}</div>`;
+ $("#app").onclick=e=>{const c=e.target.closest(".card"),f=e.target.closest(".chip");if(f){S.f=f.dataset.f;home()}if(c)play(+c.dataset.id)};
+}
+
+let timer;
+const close=()=>{clearInterval(timer);$("#dlg").close()};
+function btn(txt,cls,fn){const b=document.createElement("button");b.className="btn "+cls;b.textContent=txt;b.onclick=fn;$("#act").append(b)}
+function play(id){
+ const v=V.find(x=>x.id==id),s=$("#scr");clearInterval(timer);
+ s.style.background=`linear-gradient(135deg,${v.g[0]},${v.g[1]})`;
+ $("#dt").textContent=v.t;$("#dm").textContent=`${flag(v.cc)} ${v.u} · ${bn(v.d)}`;$("#act").innerHTML="";
+ if(v.a=="free"||unlocked.has(v.id))run(v);
+ else if(v.a=="ad"){let n=5;s.innerHTML=`<div>${t("adp")}</div><div class="big" id="n">${bn(5)}</div><div class="pg"><i id="pg"></i></div>`;
+  timer=setInterval(()=>{n--;$("#n").textContent=bn(n);$("#pg").style.width=(5-n)*20+"%";if(n<=0){clearInterval(timer);run(v)}},1000)}
+ else{s.innerHTML=`<div>${t("unl")}</div><div class="big">$${bn(v.p)}</div>`;
+  const m=S.country=="BD"?["bKash","Nagad","Card"]:S.country=="IN"?["UPI","Card"]:["Card","PayPal"];
+  m.forEach(x=>btn(t("pay")+" "+x,"",()=>{unlocked.add(v.id);store("lm_u",[...unlocked]);run(v)}))}
+ btn(t("close"),"g",close);
+ if(!$("#dlg").open)$("#dlg").showModal();
+}
+function run(v){
+ if(v.a=="paid"&&unlocked.has(v.id)&&S.view=="home"){const c=document.querySelector(`[data-id="${v.id}"] .tag`);if(c)c.textContent=t("own")}
+ $("#scr").innerHTML=`<div class="big">▶</div><div>${t("now")} · ${S.saver?"360p":"1080p"}</div><div class="pg"><i id="pg"></i></div>`;
+ let w=0;timer=setInterval(()=>{w=(w+1)%101;const p=$("#pg");if(p)p.style.width=w+"%"},300);
+}
+$("#dlg").addEventListener("close",()=>clearInterval(timer));
+
+function up(){
+ $("#app").innerHTML=`<h2 class="t">${t("upt")}</h2><div class="form">
+ <label class="fld"><span>${t("file")}</span><input type="file" id="uf" accept="video/*"></label>
+ <label class="fld"><span>${t("ttl")}</span><input type="text" id="ut" maxlength="80"></label>
+ <fieldset class="fld" style="border:0;padding:0;margin:0 0 16px"><legend style="margin-bottom:6px">${t("acc")}</legend><div class="opts">
+ ${[["free","fr","frd"],["ad","ar","ard"],["paid","pr","prd"]].map((o,i)=>`<label class="opt"><input type="radio" name="ua" value="${o[0]}"${i?"":" checked"}><span><b>${t(o[1])}</b><span class="note">${t(o[2])}</span></span></label>`).join("")}</div></fieldset>
+ <label class="fld" id="pw" hidden><span>${t("price")}</span><input type="number" id="upr" min="1" step="1" value="5"></label>
+ <label class="opt" style="margin-bottom:14px"><input type="checkbox" id="ur"><span>${t("rights")}</span></label>
+ <div class="split">${t("split")}</div><div class="err" id="er" role="alert"></div>
+ <button class="btn" id="ub">${t("pub")}</button></div>`;
+ document.querySelectorAll('[name=ua]').forEach(r=>r.onchange=()=>{$("#pw").hidden=document.querySelector("[name=ua]:checked").value!="paid"});
+ $("#ub").onclick=()=>{const f=$("#uf").files[0],ti=$("#ut").value.trim(),a=document.querySelector("[name=ua]:checked").value,p=+$("#upr").value;
+  const e=!f?"e1":!ti?"e2":a=="paid"&&!(p>0)?"e3":!$("#ur").checked?"e4":"";
+  if(e){$("#er").textContent=t(e);return}
+  const own=store("lm_up")||[],id=Date.now(),g=G[id%6];
+  own.push({id,t:ti,u:"You",cc:S.country,k:"long",a,p,d:"0:00",g});store("lm_up",own);V.push({id,t:ti,u:"You",cc:S.country,k:"long",a,p,d:"0:00",g});
+  $("#er").style.color="var(--free)";$("#er").textContent=t("ok")};
+}
+
+apply();
+if(!S.done){$("#setup").style.display="block";settingsForm($("#setup"),true)}
+nav();
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+[build]
+  publish = "public"
+
+[[headers]]
+  for = "/*.json"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/clips/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"

@@ -1,1 +1,5 @@
-{"hosting":{"public":"public","ignore":["firebase.json","**/.*"]},"firestore":{"rules":"firestore.rules"}}
+{
+  "hosting": { "public": "public", "ignore": ["firebase.json", "**/.*"] },
+  "firestore": { "rules": "firestore.rules" },
+  "storage": { "rules": "storage.rules" }
+}

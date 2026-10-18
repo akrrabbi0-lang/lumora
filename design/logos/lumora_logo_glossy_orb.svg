@@ -1,0 +1,22 @@
+<svg width="100%" viewBox="0 0 380 370" role="img"><title>Lumora logo: glossy orb</title><desc>A bright glossy ball with clean colors flowing from cyan through blue and violet to pink, with a sharp shine on the top left and a soft glow, on a black rounded tile, shown large and at 64 and 32 pixels.</desc>
+<defs>
+<linearGradient id="pL" x1="0.12" y1="0.05" x2="0.88" y2="0.95"><stop offset="0" stop-color="#27f0ff"/><stop offset="0.28" stop-color="#2f9bff"/><stop offset="0.52" stop-color="#7656ff"/><stop offset="0.76" stop-color="#d03df0"/><stop offset="1" stop-color="#ff2f8e"/></linearGradient>
+<radialGradient id="pG" cx="50%" cy="50%" r="50%"><stop offset="0.62" stop-color="#8b5cff" stop-opacity="0.45"/><stop offset="1" stop-color="#8b5cff" stop-opacity="0"/></radialGradient>
+<radialGradient id="pC" cx="30%" cy="26%" r="58%"><stop offset="0" stop-color="#ffffff" stop-opacity="0.3"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+<radialGradient id="pE" cx="50%" cy="50%" r="50%"><stop offset="0.74" stop-color="#1b0652" stop-opacity="0"/><stop offset="1" stop-color="#1b0652" stop-opacity="0.42"/></radialGradient>
+<radialGradient id="pR" cx="70%" cy="97%" r="52%"><stop offset="0" stop-color="#ffc2ea" stop-opacity="0.65"/><stop offset="1" stop-color="#ffc2ea" stop-opacity="0"/></radialGradient>
+<linearGradient id="pS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0.95"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.05"/></linearGradient>
+<g id="mark4"><rect x="80" y="20" width="220" height="220" rx="48" fill="#000"/>
+<circle cx="190" cy="130" r="104" fill="url(#pG)"/>
+<circle cx="190" cy="130" r="74" fill="url(#pL)"/>
+<circle cx="190" cy="130" r="74" fill="url(#pC)"/>
+<circle cx="190" cy="130" r="74" fill="url(#pR)"/>
+<circle cx="190" cy="130" r="74" fill="url(#pE)"/>
+<ellipse cx="158" cy="92" rx="34" ry="18" transform="rotate(-35 158 92)" fill="url(#pS)"/></g>
+</defs>
+<use href="#mark4"/>
+<use href="#mark4" transform="translate(120 262) scale(0.2909) translate(-80 -20)"/>
+<use href="#mark4" transform="translate(214 262) scale(0.1455) translate(-80 -20)"/>
+<text class="ts" x="152" y="346" text-anchor="middle">64 px</text>
+<text class="ts" x="230" y="346" text-anchor="middle">32 px</text>
+</svg>
