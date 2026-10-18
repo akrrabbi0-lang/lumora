@@ -24,6 +24,9 @@ h1,.th,.nx span{overflow-wrap:anywhere}
 @keyframes f{to{background-position:300% 0}}
 @media (prefers-reduced-motion:reduce){.logo{animation:none}}
 #conn{margin-left:auto}
+#who{color:var(--mute);font-size:.85rem;max-width:42vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#who:not(:empty){margin-left:auto}#who:not(:empty)~#conn{margin-left:0}
+#adm[hidden]{display:none}
 .btn{border:0;border-radius:12px;padding:10px 20px;font-weight:800;cursor:pointer;color:#fff;background:linear-gradient(90deg,var(--pink),var(--vio));text-decoration:none;display:inline-block}
 .btn.g{background:var(--s2);border:1px solid var(--line)}
 .btn[disabled]{opacity:.5;cursor:not-allowed}
@@ -58,7 +61,7 @@ aside h3{margin:6px 0 12px;font-size:1rem}
 </style>
 </head>
 <body>
-<header><div class="wrap"><a class="brand" id="brand" href="/"><canvas id="lg" width="76" height="76" aria-hidden="true"></canvas><span class="logo">Lumora</span></a><button class="btn g" id="conn" type="button">Connect</button><button class="btn" id="auth" type="button">Sign in</button></div></header>
+<header><div class="wrap"><a class="brand" id="brand" href="/"><canvas id="lg" width="76" height="76" aria-hidden="true"></canvas><span class="logo">Lumora</span></a><span id="who"></span><a class="btn" id="adm" href="/admin.html" hidden>Upload</a><button class="btn g" id="conn" type="button">Connect</button><button class="btn" id="auth" type="button">Sign in</button></div></header>
 <main class="wrap" id="app"></main>
 
 <script type="module">
@@ -189,6 +192,7 @@ async function download(){
 D=await B.data();st=await B.stats();
 B.onAuth(async u=>{
  me=u;$("#auth").textContent=u?"Sign out":"Sign in";
+ $("#who").textContent=u?u.email:"";$("#adm").hidden=!(u&&u.email==="akr.rabbi0@gmail.com");
  got=u?await B.downloaded(u):new Set();used=u?await B.usedToday(u):false;
  if(!ready){ready=true;route()}
  else if(!location.hash.startsWith("#/watch/"))home();else refreshDl();
