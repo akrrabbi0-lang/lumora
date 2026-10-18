@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Lumora Admin</title>
+<style>
+:root{--bg:#000;--s1:#0d0d12;--ink:#f6f6fb;--mute:#a0a0b4;--line:#2a2a36;--pink:#ff2e93;--vio:#8b5cff;--cyan:#22d3ee;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 system-ui,sans-serif;padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom)}
+main{max-width:760px;margin:0 auto;padding:24px 0}
+h1{margin:0 0 6px}
+.note{color:var(--mute);font-size:.9rem}
+.btn{border:0;border-radius:12px;padding:10px 20px;font:inherit;font-weight:800;cursor:pointer;color:#fff;background:linear-gradient(90deg,var(--pink),var(--vio))}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.box{background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:16px;margin:16px 0}
+input[type=file]{display:block;margin:10px 0;max-width:100%}
+.it{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid var(--line);font-size:.9rem;overflow-wrap:anywhere}
+.ok{color:#4ade80}.err{color:#f87171}
+label{display:block;margin:8px 0;font-size:.9rem;color:var(--mute)}
+input[type=text],input[type=url],input[type=number]{display:block;width:100%;margin-top:4px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:#000;color:var(--ink);font:inherit}
+.sm{border:1px solid var(--line);background:var(--s1);color:var(--ink);border-radius:8px;padding:4px 10px;font:inherit;font-size:.85rem;cursor:pointer}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+</style>
+</head>
+<body>
+<main>
+<h1>Lumora Admin</h1>
+<p class="note" id="who">Not signed in.</p>
+<div class="box">
+ <button class="btn" id="auth" type="button">Sign in with Google</button>
+</div>
+<div class="box" id="up" hidden>
+ <strong>Upload videos</strong>
+ <p class="note">Name each file after the clip id, e.g. <code>c24.mp4</code>. Max 200 MB per file. You can select many files at once.</p>
+ <input type="file" id="f" accept="video/*,image/*" multiple>
+ <button class="btn" id="go" type="button">Upload</button>
+ <div id="list"></div>
+</div>
+<div class="box" id="adup" hidden>
+ <strong>Upload as ad</strong>
+ <p class="note">Video or image. It is shown before clips, mixed with all other ads, until the view limit is reached. Viewers can skip after 5 seconds.</p>
+ <input type="file" id="af" accept="video/*,image/*">
+ <label>Ad name <input type="text" id="an" maxlength="60"></label>
+ <label>Link when clicked (optional) <input type="url" id="al" placeholder="https://"></label>
+ <label>Show how many times in total <input type="number" id="am" min="1" value="1000"></label>
+ <button class="btn" id="ago" type="button">Upload ad</button>
+ <div class="note" id="astat"></div>
+</div>
+<div class="box" id="adlist" hidden><strong>Your ads</strong><div id="al2" class="note">Loading…</div></div>
+<div class="box"><strong>Clip ids</strong><div class="note" id="ids">Loading…</div></div>
+</main>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithPopup,GoogleAuthProvider,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getStorage,ref,uploadBytesResumable,deleteObject} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js";
+import {getFirestore,collection,getDocs,doc,setDoc,updateDoc,deleteDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyA-A1lN0Bm3c9U-rLc1OUcSfpkETzrmqWM",authDomain:"lomura-fde61.firebaseapp.com",projectId:"lomura-fde61",storageBucket:"lomura-fde61.firebasestorage.app",messagingSenderId:"986563862116",appId:"1:986563862116:web:8f043268e1df5261710971"});
+const auth=getAuth(app),st=getStorage(app),db=getFirestore(app);
+const OWNER="akr.rabbi0@gmail.com";
+const $=s=>document.querySelector(s);
+let me=null;
+
+fetch("clips.json",{cache:"no-store"}).then(r=>r.json()).then(c=>{$("#ids").textContent=c.map(x=>x.id+" – "+x.title).join("  |  ")}).catch(()=>{$("#ids").textContent="Could not load clips.json"});
+
+$("#auth").onclick=()=>me?signOut(auth):signInWithPopup(auth,new GoogleAuthProvider()).catch(e=>{$("#who").textContent="Sign in failed: "+(e.code||e.message)});
+onAuthStateChanged(auth,u=>{
+ me=u;$("#auth").textContent=u?"Sign out":"Sign in with Google";
+ const owner=!!u&&u.email===OWNER;
+ $("#who").textContent=u?(owner?"Signed in as "+u.email:u.email+" is not allowed to upload."):"Not signed in.";
+ $("#up").hidden=!owner;$("#adup").hidden=!owner;$("#adlist").hidden=!owner;if(owner)loadAds();
+});
+
+$("#go").onclick=()=>{
+ const files=[...$("#f").files];if(!files.length)return;
+ const L=$("#list");L.innerHTML="";$("#go").disabled=true;
+ let left=files.length;
+ files.forEach(file=>{
+  const row=document.createElement("div");row.className="it";
+  const a=document.createElement("span");a.textContent=file.name;
+  const b=document.createElement("span");b.textContent="0%";
+  row.append(a,b);L.append(row);
+  const t=uploadBytesResumable(ref(st,"clips/"+file.name),file,{contentType:file.type||"video/mp4"});
+  const fin=()=>{if(--left===0)$("#go").disabled=false};
+  t.on("state_changed",s=>{b.textContent=Math.round(s.bytesTransferred/s.totalBytes*100)+"%"},
+   e=>{b.textContent=e.code||"error";b.className="err";fin()},
+   ()=>{b.textContent="Done";b.className="ok";fin()});
+ });
+};
+
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+async function loadAds(){
+ const box=$("#al2");
+ try{
+  const s=await getDocs(collection(db,"ads"));
+  const L=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  box.innerHTML="";
+  if(!L.length){box.textContent="No ads yet.";return}
+  L.forEach(a=>{
+   const v=a.views||0,done=v>=a.maxViews,state=done?"Finished":a.active===false?"Paused":"Running";
+   const row=document.createElement("div");row.className="it";
+   row.innerHTML='<span>'+esc(a.name)+' ('+(a.kind==="image"?"image":"video")+') &middot; <b>'+v+' / '+a.maxViews+'</b> &middot; <span class="'+(state==="Running"?"ok":"")+'">'+state+'</span></span>';
+   const acts=document.createElement("span");acts.className="acts";
+   const mk=(t,fn)=>{const b=document.createElement("button");b.className="sm";b.type="button";b.textContent=t;b.onclick=async()=>{try{await fn()}catch(e){alert(e.code||e.message)}loadAds()};acts.append(b)};
+   mk("Change limit",async()=>{const n=parseInt(prompt("Total views allowed",a.maxViews),10);if(n>0)await updateDoc(doc(db,"ads",a.id),{maxViews:n})});
+   mk(a.active===false?"Resume":"Pause",()=>updateDoc(doc(db,"ads",a.id),{active:a.active===false}));
+   mk("Delete",async()=>{if(!confirm("Delete this ad?"))return;await deleteDoc(doc(db,"ads",a.id));try{await deleteObject(ref(st,"ads/"+a.file))}catch(e){}});
+   row.append(acts);box.append(row);
+  });
+ }catch(e){box.textContent="Could not load ads: "+(e.code||e.message)}
+}
+$("#ago").onclick=()=>{
+ const f=$("#af").files[0],S=$("#astat");
+ if(!f){S.textContent="Choose a video or image first.";return}
+ const name=$("#an").value.trim()||f.name,link=$("#al").value.trim(),max=parseInt($("#am").value,10);
+ if(!(max>0)){S.textContent="Enter how many times the ad should be shown.";return}
+ if(link&&!/^https?:\/\//.test(link)){S.textContent="Link must start with http:// or https://";return}
+ const kind=f.type.startsWith("image/")?"image":"video",id=Date.now().toString(36),file=id+"_"+f.name.replace(/[^A-Za-z0-9._-]/g,"_");
+ $("#ago").disabled=true;S.className="note";S.textContent="Uploading 0%";
+ const t=uploadBytesResumable(ref(st,"ads/"+file),f,{contentType:f.type||"video/mp4"});
+ t.on("state_changed",x=>{S.textContent="Uploading "+Math.round(x.bytesTransferred/x.totalBytes*100)+"%"},
+  e=>{S.className="err";S.textContent="Upload failed: "+(e.code||e.message);$("#ago").disabled=false},
+  async()=>{try{await setDoc(doc(db,"ads",id),{name,link,kind,file,maxViews:max,views:0,active:true,createdAt:serverTimestamp()});S.className="ok";S.textContent="Ad uploaded and running.";$("#af").value="";$("#an").value="";$("#al").value="";loadAds()}catch(e){S.className="err";S.textContent="Saved file but could not save ad: "+(e.code||e.message)}$("#ago").disabled=false});
+};
+</script>
+</body>
+</html>
